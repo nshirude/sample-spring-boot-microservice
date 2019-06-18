@@ -1,0 +1,60 @@
+{
+    "provider": {
+        "name": "ProductServiceProvider"
+    },
+    "consumer": {
+        "name": "CatalogServiceClient"
+    },
+    "interactions": [
+        {
+            "description": "Product availableQuantity",
+            "request": {
+                "method": "GET",
+                "path": "/api/products/Pencil"
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "availableQuantity": 200,
+                    "productCode": "Pencil"
+                },
+                "matchingRules": {
+                    "body": {
+                        "$.productCode": {
+                            "matchers": [
+                                {
+                                    "match": "type"
+                                }
+                            ],
+                            "combine": "AND"
+                        },
+                        "$.availableQuantity": {
+                            "matchers": [
+                                {
+                                    "match": "integer"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "Product Code"
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "3.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.5.10"
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" name="${app.artifact}"
+	packages="${app.package}">
+	<Appenders>
+		<Kafka name="kafkaAppender" topic="dbplogs">
+			<!-- <JSONLayout /> -->
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%X{X-B3-TraceId}] [%t] %c{1} - %msg%n" />
+			<Property name="bootstrap.servers">localhost:9092</Property>
+		</Kafka>
+		<Async name="Async">
+            <AppenderRef ref="kafkaAppender"/>
+        </Async> 
+		<!--stdout/stderr included for testing Oozie log4j edits -->
+		<Console name="stdout" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%X{X-B3-TraceId}] [%-7t] %F:%L - %m%n" />
+		</Console>
+		<Console name="stderr" target="SYSTEM_ERR">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%X{X-B3-TraceId}] [%-7t] %F:%L - %m%n" />
+			<Filters>
+				<ThresholdFilter level="WARN" onMatch="ACCEPT" />
+			</Filters>
+		</Console>
+
+	</Appenders>
+	<Loggers>
+		<Root level="INFO">
+			<AppenderRef ref="stdout" />
+			<AppenderRef ref="stderr" />
+		</Root>
+		<logger name="com.myspace.kafkasleuth.services.LogServiceImpl"
+			level="INFO">
+			<AppenderRef ref="kafkaAppender" />
+		</logger>
+
+		<Logger name="org.apache.kafka" level="INFO" additivity="false">
+		</Logger>
+	</Loggers>
+</Configuration>
